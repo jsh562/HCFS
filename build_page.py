@@ -1,9 +1,13 @@
 #!/usr/bin/env python3
-"""Generate index.html from the LICENSE file.
+"""Generate the HCFS license template and the GitHub Pages site.
 
-The full license text is read from LICENSE at runtime and wrapped in a
-styled, self-contained HTML page (table of contents + anchor links per
-section). Regenerate this after editing LICENSE so the page stays in sync:
+Reads the filled-in LICENSE (the licensor's own instance) and produces:
+  - HCFS-1.0.txt : a generic, fill-in-the-blanks template (placeholders)
+  - index.html   : the styled web page (adoption guide + the template text)
+
+The full license body is read from LICENSE at runtime and transformed by
+string substitution; it is never hand-edited here. Regenerate after editing
+LICENSE or header.txt so everything stays in sync:
 
     python build_page.py
 """
@@ -14,11 +18,68 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent
 license_text = (ROOT / "LICENSE").read_text(encoding="utf-8")
 
-# Match each bundled-section banner:  =====\nSECTION X: ...\n=====
+CANONICAL_URL = "https://jsh562.github.io/HCFS/"
+SPDX_ID = "LicenseRef-HCFS-1.0"
+RAW_LATEST = "https://raw.githubusercontent.com/jsh562/HCFS/main/HCFS-1.0.txt"
+RAW_PINNED = "https://raw.githubusercontent.com/jsh562/HCFS/v1.0/HCFS-1.0.txt"
+
+# --- 1. Build the generic template by replacing instance-specific fields -----
+# Order matters: longer / more specific phrases first so they win.
+SUBS = [
+    ("San Diego County, California, USA", "[COUNTY], [STATE], [COUNTRY]"),
+    ("San Diego County, California", "[COUNTY], [STATE]"),
+    ("California law", "[STATE] law"),
+    ("San Diego Jurisdiction:", "Governing Law and Venue:"),
+    ("San Diego County", "[COUNTY]"),
+    ("James Han at jsh562@gmail.com", "[LICENSOR NAME] at [CONTACT EMAIL]"),
+    ("Licensor: James Han", "Licensor: [LICENSOR NAME]"),
+    ("Contributor: James Han", "Contributor: [LICENSOR NAME]"),
+    ("Contributor: $name", "Contributor: [LICENSOR NAME]"),
+    ("Source Code: https://github.com/jsh562/flutter_ecg_monitor", "Source Code: [SOURCE CODE URL]"),
+    ("Source Code: $address", "Source Code: [SOURCE CODE URL]"),
+]
+template_body = license_text
+for old, new in SUBS:
+    template_body = template_body.replace(old, new)
+template_body = template_body.rstrip() + "\n"
+
+NOTICE = f"""\
+===========================================================================
+HAN CONDITIONAL FAIR SOURCE 1.0 (HCFS) -- LICENSE TEMPLATE
+===========================================================================
+
+Canonical home : {CANONICAL_URL}
+Identifier     : HCFS 1.0  (SPDX expression: {SPDX_ID})
+
+HOW TO USE THIS TEMPLATE
+Replace every bracketed field below with your own information, then save the
+result in your project as a file named LICENSE:
+
+  [LICENSOR NAME]   - the person or entity granting the license
+  [CONTACT EMAIL]   - where licensees reach you for commercial terms
+  [SOURCE CODE URL] - the public location of your source code
+  [COUNTY]          - county for governing law and venue
+  [STATE]           - governing-law state or province
+  [COUNTRY]         - governing-law country
+
+COPYING THIS LICENSE
+You may copy and distribute verbatim copies of this license document and use
+it as the license for your own software. You may fill in the bracketed fields
+above with your own information. You may not otherwise modify the wording. The
+names "Han Conditional Fair Source" and "HCFS" refer only to the unmodified
+text of this document.
+
+===========================================================================
+
+"""
+
+(ROOT / "HCFS-1.0.txt").write_text(NOTICE + template_body, encoding="utf-8")
+
+# --- 2. Build index.html from the template body -----------------------------
 banner = re.compile(r"^={5,}\r?\n(SECTION ([A-D]):[^\n]*)\r?\n={5,}\r?$", re.M)
-matches = list(banner.finditer(license_text))
+matches = list(banner.finditer(template_body))
 if len(matches) != 4:
-    raise SystemExit(f"Expected 4 SECTION banners in LICENSE, found {len(matches)}")
+    raise SystemExit(f"Expected 4 SECTION banners, found {len(matches)}")
 
 ANCHOR = {"A": "commercial", "B": "prosperity", "C": "parity", "D": "agpl"}
 LABEL = {
@@ -28,10 +89,8 @@ LABEL = {
     "D": "D &middot; GNU Affero GPL v3.0",
 }
 
-# Everything before the first banner is the HCFS framework (sections 1-7).
-framework_text = license_text[: matches[0].start()].rstrip()
+framework_text = template_body[: matches[0].start()].rstrip()
 fw = html.escape(framework_text)
-
 # Turn the plain-text in-body nav ("Commercial ~ Line 249", ...) into anchors.
 nav_links = {
     "Commercial ~ Line 249": '<a href="#commercial">Commercial License &darr;</a>',
@@ -43,24 +102,46 @@ for raw, link in nav_links.items():
     fw = fw.replace(html.escape(raw), link)
 
 parts = [f'<section id="framework"><pre class="doc">{fw}</pre></section>']
-toc = ['<li><a href="#framework">HCFS Framework Terms (§1–§7)</a></li>']
-
+toc = [
+    '<li><a href="#adopt">How to adopt HCFS</a></li>',
+    '<li><a href="#framework">HCFS Framework Terms (§1–§7)</a></li>',
+]
 for i, m in enumerate(matches):
     letter = m.group(2)
     start = m.start()
-    end = matches[i + 1].start() if i + 1 < len(matches) else len(license_text)
-    block = html.escape(license_text[start:end].rstrip())
+    end = matches[i + 1].start() if i + 1 < len(matches) else len(template_body)
+    block = html.escape(template_body[start:end].rstrip())
     cls = "doc mono" if letter == "D" else "doc"
     parts.append(f'<section id="{ANCHOR[letter]}"><pre class="{cls}">{block}</pre></section>')
     toc.append(f'<li><a href="#{ANCHOR[letter]}">{LABEL[letter]}</a></li>')
+
+header_snippet = html.escape((ROOT / "header.txt").read_text(encoding="utf-8").rstrip())
+
+ADOPT = f"""<section id="adopt" class="adopt">
+<h2>Adopt this license</h2>
+<p>HCFS is a reusable source-available license. To license your own project under it:</p>
+<ol>
+<li>Copy the <a href="./HCFS-1.0.txt">HCFS&nbsp;1.0 template</a> into a file named <code>LICENSE</code> at the root of your project.</li>
+<li>Replace the bracketed fields &mdash; <code>[LICENSOR NAME]</code>, <code>[CONTACT EMAIL]</code>, <code>[SOURCE CODE URL]</code>, <code>[COUNTY]</code>, <code>[STATE]</code>, <code>[COUNTRY]</code> &mdash; with your own details. Do not change any other wording.</li>
+<li>Add this header to the top of every source file:
+<pre class="snippet">{header_snippet}</pre></li>
+<li>Declare it in your package metadata &mdash; e.g. npm <code>"license": "SEE LICENSE IN LICENSE"</code>, or the SPDX expression <code>{SPDX_ID}</code>.</li>
+</ol>
+<p class="ids"><strong>Name:</strong> Han Conditional Fair Source 1.0 &nbsp;&middot;&nbsp; <strong>Short:</strong> HCFS 1.0 &nbsp;&middot;&nbsp; <strong>SPDX:</strong> <code>{SPDX_ID}</code></p>
+<p class="ids"><strong>Reference URLs</strong><br>
+Human-readable: <a href="{CANONICAL_URL}">{CANONICAL_URL}</a><br>
+Raw template (latest): <code>{RAW_LATEST}</code><br>
+Raw template (pinned): <code>{RAW_PINNED}</code></p>
+<p class="note">Copying terms: you may use this license and fill in the bracketed fields, but not otherwise alter the wording. &ldquo;HCFS&rdquo; refers only to the unmodified text. The text below is the template &mdash; the bracketed fields show what you replace.</p>
+</section>"""
 
 TEMPLATE = """<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Han Conditional Fair Source v1.0 (HCFS) &mdash; License</title>
-<meta name="description" content="The Han Conditional Fair Source v1.0 (HCFS) software license by James Han.">
+<title>Han Conditional Fair Source 1.0 (HCFS) &mdash; reusable source-available license</title>
+<meta name="description" content="HCFS is a reusable source-available software license. Copy the template, fill in your fields, and reference it as LicenseRef-HCFS-1.0.">
 <style>
 :root{--bg:#fff;--fg:#1a1a1a;--muted:#566;--accent:#0b5fff;--border:#e3e3e6;--card:#f6f7f9;--pre:#f7f8fa}
 @media (prefers-color-scheme:dark){:root{--bg:#15171a;--fg:#e7e7e7;--muted:#9aa0a6;--accent:#7aa2ff;--border:#2a2d31;--card:#1c1f23;--pre:#101215}}
@@ -78,6 +159,13 @@ nav.toc li{margin:.28rem 0}
 a{color:var(--accent);text-decoration:none}
 a:hover{text-decoration:underline}
 section{scroll-margin-top:1rem}
+code{background:var(--pre);border:1px solid var(--border);border-radius:4px;padding:.05rem .35rem;font:13px/1.4 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.adopt{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1.2rem 1.4rem;margin:1.6rem 0}
+.adopt h2{margin-top:0;font-size:1.25rem}
+.adopt ol{padding-left:1.2rem}
+.adopt li{margin:.5rem 0}
+.adopt .ids{font-size:.92rem;margin:.6rem 0}
+pre.snippet{background:var(--pre);border:1px solid var(--border);border-radius:8px;padding:.8rem 1rem;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word;font:12.5px/1.5 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;margin:.6rem 0}
 pre.doc{white-space:pre-wrap;word-wrap:break-word;overflow-wrap:anywhere;font:inherit;margin:1.4rem 0;padding:0}
 pre.doc.mono{font:12.5px/1.5 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;background:var(--pre);border:1px solid var(--border);border-radius:8px;padding:1rem;overflow-x:auto}
 .note{background:var(--card);border-left:3px solid var(--accent);padding:.7rem 1rem;border-radius:4px;font-size:.9rem;color:var(--muted);margin:1.2rem 0}
@@ -87,9 +175,9 @@ footer.site{margin-top:2.6rem;padding-top:1.4rem;border-top:1px solid var(--bord
 <body>
 <div class="wrap">
 <header class="site">
-<h1>Han Conditional Fair Source v1.0 (HCFS)</h1>
-<p class="sub">Licensor: James Han</p>
-<p class="sub">Jurisdiction: San Diego County, California, USA</p>
+<h1>Han Conditional Fair Source 1.0 (HCFS)</h1>
+<p class="sub">A reusable source-available software license.</p>
+<p class="sub">Created by James Han &middot; Identifier: HCFS 1.0 (__SPDX__)</p>
 </header>
 
 <nav class="toc">
@@ -99,19 +187,23 @@ __TOC__
 </ol>
 </nav>
 
-<p class="note">This page reproduces the license for convenient reading. The canonical, binding text is the <a href="./LICENSE">LICENSE</a> file in this repository.</p>
+__ADOPT__
 
 __BODY__
 
 <footer class="site">
-<p>For commercial licensing, contact James Han at jsh562@gmail.com.</p>
-<p>Canonical text: <a href="./LICENSE">LICENSE</a></p>
+<p>HCFS was created by James Han. This page shows the reusable template; see <a href="./HCFS-1.0.txt">HCFS-1.0.txt</a> for the raw template and <a href="./LICENSE">LICENSE</a> for the author's own filled-in instance.</p>
 </footer>
 </div>
 </body>
 </html>
 """
 
-out = TEMPLATE.replace("__TOC__", "\n".join(toc)).replace("__BODY__", "\n".join(parts))
+out = (
+    TEMPLATE.replace("__SPDX__", SPDX_ID)
+    .replace("__TOC__", "\n".join(toc))
+    .replace("__ADOPT__", ADOPT)
+    .replace("__BODY__", "\n".join(parts))
+)
 (ROOT / "index.html").write_text(out, encoding="utf-8")
-print(f"Wrote {ROOT / 'index.html'} ({len(out)} bytes, {len(matches)} sections)")
+print(f"Wrote HCFS-1.0.txt and index.html ({len(out)} bytes, {len(matches)} sections)")

@@ -1,0 +1,9 @@
+[ONE-LINE DESCRIPTION OF THIS FILE OR PROGRAM]
+Copyright (C) [YEAR] [LICENSOR NAME]
+
+This file is licensed under the Han Conditional Fair Source 1.0 (HCFS).
+Your rights depend on your user category (non-commercial; authorized
+commercial trial or paid; or unauthorized commercial). See the LICENSE
+file in this project, or https://jsh562.github.io/HCFS/, for full terms.
+
+SPDX-License-Identifier: LicenseRef-HCFS-1.0
