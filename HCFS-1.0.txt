@@ -7,7 +7,8 @@ Identifier     : HCFS 1.0  (SPDX expression: LicenseRef-HCFS-1.0)
 
 HOW TO USE THIS TEMPLATE
 Replace every bracketed field below with your own information, then save the
-result in your project as a file named LICENSE:
+result in your project as a file named LICENSE. The generator at the canonical
+home above can do this for you:
 
   [LICENSOR NAME]   - the person or entity granting the license
   [CONTACT EMAIL]   - where licensees reach you for commercial terms

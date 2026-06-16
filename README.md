@@ -14,6 +14,10 @@ AGPL) for unauthorized commercial use.
 
 ## Use HCFS for your own project
 
+**Easiest:** open the [generator](https://jsh562.github.io/HCFS/#adopt), fill in your details, and copy/download a ready `LICENSE` (runs entirely in your browser).
+
+Or do it by hand:
+
 1. Copy [`HCFS-1.0.txt`](HCFS-1.0.txt) into a file named `LICENSE` at your repo root.
 2. Replace the bracketed fields with your own details — and change nothing else:
    - `[LICENSOR NAME]` — you (the person/entity granting the license)
