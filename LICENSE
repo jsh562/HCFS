@@ -40,10 +40,10 @@ The rights granted to the User are non-exclusive. The Licensor reserves the righ
 2.1 The Notice Clock 
 If you were unaware of commercial requirements, you have 30 days to transition to an Authorized Path. This grace period starts at the earlier of Discovery or Notice. (Note: This runs concurrently with your Trial Period, or acts as a final cure period if your trial has already expired).
 
-2.2 Status Triggers * Growth: 
+2.2 Status Triggers * Growth
 Moving to Commercial use ends your Non-Commercial status automatically and immediately triggers your 30-day Trial Period at your very first instance of Commercial use.
 
-Litigation: 
+Litigation
 If you start a lawsuit against the Licensor, all other license grants terminate immediately. Your only remaining legal right to use the Software is under Parity 7.0.0.
 
 2.3 Security and Trial Controls 
@@ -73,7 +73,8 @@ The Licensor may seek an injunction to stop your use or force source code disclo
 3.4 Amnesty 
 Upon full payment of all Fees and written confirmation from the Licensor, your election of Parity 7.0.0 is revoked and replaced by an Authorized Commercial License.
 
-3.5 Liquidated Damages If you use the Software for any Commercial Purpose in breach of this License, you agree that proving actual damages would be difficult. You agree to pay the Licensor, as liquidated damages and not as a penalty, an amount equal to three times (3x) the standard commercial licensing fee for the duration of the unauthorized use, in addition to any other Fees. This amount acts as a floor and does not preclude the Licensor’s right to seek statutory damages for willful copyright infringement.
+3.5 Liquidated Damages 
+If you use the Software for any Commercial Purpose in breach of this License, you agree that proving actual damages would be difficult. You agree to pay the Licensor, as liquidated damages and not as a penalty, an amount equal to three times (3x) the standard commercial licensing fee for the duration of the unauthorized use, in addition to any other Fees. This amount acts as a floor and does not preclude the Licensor’s right to seek statutory damages for willful copyright infringement.
 
 4. Financial and Audit Terms
 
@@ -125,9 +126,11 @@ A single, non-renewable, 30-day evaluation period per individual, organization, 
 San Diego Jurisdiction: 
 This License is governed by California law. All disputes must be resolved exclusively in the state or federal courts in San Diego County, California. The parties waive any objection to San Diego County as an inconvenient forum.
 
-Class Action Waiver: All claims must be brought in the parties' individual capacity, and not as a plaintiff or class member in any purported class or representative proceeding.
+Class Action Waiver: 
+All claims must be brought in the parties' individual capacity, and not as a plaintiff or class member in any purported class or representative proceeding.
 
-CISG Exclusion: The United Nations Convention on Contracts for the International Sale of Goods is specifically excluded.
+CISG Exclusion: 
+The United Nations Convention on Contracts for the International Sale of Goods is specifically excluded.
 
 Entire Agreement and Priority:
 This License and any signed Commercial Agreement constitute the entire agreement between the parties, superseding all prior communications or informal understandings. In the event of a conflict between this License and any other project documentation (e.g., README files), the terms of this License shall prevail.
@@ -183,7 +186,8 @@ To the maximum extent permitted by law, the User shall not be entitled to seek o
 Neutral Interpretation and Headings:
 This License shall be interpreted neutrally, as if drafted by both parties. The rule of construction that ambiguities are resolved against the drafting party (contra proferentem) shall not apply. Section headings are for convenience only and do not affect interpretation.
 
-Waiver of Sovereign Immunity: If the User is a government entity, state-owned enterprise, or other entity entitled to sovereign or official immunity, the User hereby unconditionally and irrevocably waives such immunity for any action arising under this License.
+Waiver of Sovereign Immunity: 
+If the User is a government entity, state-owned enterprise, or other entity entitled to sovereign or official immunity, the User hereby unconditionally and irrevocably waives such immunity for any action arising under this License.
 
 Opportunity to Consult Counsel:
 The User acknowledges that they have had the opportunity to review this License with legal counsel of their choice before utilizing the Software.
@@ -236,10 +240,10 @@ The User acknowledges that they are not relying on any representation or warrant
 
 ----------
 
-Commercial ~ Line 249
-PROSPERITY 3.0.0 ~ Line 257
-PARITY 7.0.0 ~ Line 321
-AGPL-3.0 ~ Line 388
+Commercial ~ Line 253
+PROSPERITY 3.0.0 ~ Line 261
+PARITY 7.0.0 ~ Line 325
+AGPL-3.0 ~ Line 392
 
 ----------
 
